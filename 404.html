@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Halaman Tidak Ditemukan — NetOptima</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0D1321', surface: '#161D2F', surface2: '#1D2740', border: '#26304A',
+          muted: '#8B96AF', fog: '#E7ECF5', signal: '#34D399', upload: '#FBBF24', alert: '#F87171',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-ink text-fog font-body min-h-screen flex flex-col items-center justify-center px-4 text-center">
+
+<span class="signal-mark mb-6" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+<p class="font-mono text-sm text-muted mb-2">ERROR 404</p>
+<h1 class="font-display text-2xl sm:text-3xl font-semibold mb-3">Halaman Tidak Ditemukan</h1>
+<p class="text-muted max-w-md mb-8 leading-relaxed">
+  Halaman yang kamu cari tidak ada, mungkin salah ketik alamat atau linknya sudah tidak berlaku.
+</p>
+<a href="index.html" class="btn-primary">Kembali ke Beranda</a>
+
+</body>
+</html>

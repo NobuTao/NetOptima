@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisis Log Mikrotik — NetOptima</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<meta name="description" content="Unggah log Mikrotik untuk melihat IP dengan trafik terbesar, sebaran protokol, dan jam tersibuk.">
+<meta property="og:title" content="Analisis Log Mikrotik — NetOptima">
+<meta property="og:description" content="Unggah log Mikrotik untuk melihat IP dengan trafik terbesar, sebaran protokol, dan jam tersibuk.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0D1321', surface: '#161D2F', surface2: '#1D2740', border: '#26304A',
+          muted: '#8B96AF', fog: '#E7ECF5', signal: '#34D399', upload: '#FBBF24', alert: '#F87171',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-ink text-fog font-body min-h-screen flex flex-col">
+
+<div id="site-header"></div>
+<script src="assets/js/layout.js" data-active="log"></script>
+
+<main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+
+<section class="mb-10">
+  <p class="text-alert font-mono text-sm mb-2">MODUL 3</p>
+  <h1 class="font-display text-2xl sm:text-3xl font-semibold">Analisis Log Mikrotik</h1>
+  <p class="text-muted mt-3 max-w-2xl leading-relaxed">
+    Unggah log Mikrotik (teks atau CSV) untuk melihat IP dengan trafik terbesar, sebaran protokol, dan jam tersibuk. File diproses langsung di browser, tidak diunggah ke mana pun.
+  </p>
+</section>
+
+<section class="card p-6 sm:p-8 mb-10">
+  <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-2">
+    <label for="logFileInput" class="btn-secondary cursor-pointer text-center">
+      Pilih File Log
+      <input type="file" id="logFileInput" accept=".txt,.log,.csv" class="hidden">
+    </label>
+    <button id="uploadBtn" class="btn-primary" disabled>Analisis File</button>
+    <button id="sampleLogBtn" class="text-sm text-muted underline underline-offset-2 hover:text-fog bg-transparent border-none cursor-pointer">
+      Belum punya file? Unduh contoh log
+    </button>
+  </div>
+  <p id="fileNameLabel" class="text-xs text-muted font-mono mb-4">Belum ada file dipilih.</p>
+  <p id="uploadStatus" class="text-sm text-muted" aria-live="polite"></p>
+</section>
+
+<section id="resultSection" class="hidden space-y-8">
+  <div class="flex items-center justify-between flex-wrap gap-3">
+    <h2 class="font-display text-lg font-semibold">Hasil Analisis</h2>
+    <button id="exportCsvBtn" class="btn-secondary text-xs">Unduh CSV (Top IP)</button>
+  </div>
+
+  <div class="grid sm:grid-cols-3 gap-4">
+    <div class="card p-5">
+      <p class="text-xs font-mono text-muted mb-1">TOTAL BARIS DIKENALI</p>
+      <p id="totalRecords" class="stat-value text-2xl font-semibold">—</p>
+    </div>
+    <div class="card p-5">
+      <p class="text-xs font-mono text-muted mb-1">JAM TERSIBUK</p>
+      <p id="busiestHourLog" class="stat-value text-2xl font-semibold text-alert">—</p>
+    </div>
+    <div class="card p-5">
+      <p class="text-xs font-mono text-muted mb-1">IP TERBESAR</p>
+      <p id="topIp" class="stat-value text-lg font-semibold">—</p>
+    </div>
+  </div>
+
+  <div class="card p-6 sm:p-8">
+    <h2 class="font-display text-lg font-semibold mb-4">Trafik per Jam</h2>
+    <div style="height: 260px;">
+      <canvas id="hourlyChart"></canvas>
+    </div>
+  </div>
+
+  <div class="grid sm:grid-cols-2 gap-6">
+    <div class="card p-6 sm:p-8">
+      <h2 class="font-display text-lg font-semibold mb-4">10 IP dengan Trafik Terbesar</h2>
+      <div class="overflow-x-auto">
+        <table class="data-table">
+          <thead><tr><th>IP</th><th>Bytes</th><th>Jumlah Paket</th></tr></thead>
+          <tbody id="topSourcesBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card p-6 sm:p-8">
+      <h2 class="font-display text-lg font-semibold mb-4">Sebaran Protokol</h2>
+      <div style="height: 240px;">
+        <canvas id="protocolChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Before-After Comparison -->
+  <div class="card p-6 sm:p-8">
+    <h2 class="font-display text-lg font-semibold mb-1">Bandingkan dengan File Lain</h2>
+    <p class="text-xs text-muted mb-4 leading-relaxed">
+      Unggah log dari sebelum perubahan konfigurasi sebagai pembanding "sebelum". File di atas jadi kondisi "sesudah".
+    </p>
+    <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+      <label for="compareFileInput" class="btn-secondary cursor-pointer text-center text-sm">
+        Pilih File Pembanding (Sebelum)
+        <input type="file" id="compareFileInput" accept=".txt,.log,.csv" class="hidden">
+      </label>
+      <span id="compareFileLabel" class="text-xs text-muted font-mono">Belum ada file dipilih.</span>
+    </div>
+    <div id="comparisonResult" class="hidden"></div>
+  </div>
+</section>
+
+<section class="card p-6 sm:p-8 mt-10">
+  <h2 class="font-display text-lg font-semibold mb-3">Riwayat Analisis</h2>
+  <div class="overflow-x-auto">
+    <table class="data-table">
+      <thead><tr><th>File</th><th>Waktu</th></tr></thead>
+      <tbody id="logHistoryBody"></tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/log-parser.js"></script>
+<script src="assets/js/loganalysis.js"></script>
+</body>
+</html>

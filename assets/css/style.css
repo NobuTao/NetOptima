@@ -1,0 +1,335 @@
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-feature-settings: "tnum" 1;
+}
+
+h1, h2, h3, .font-display {
+  letter-spacing: -0.01em;
+}
+
+/* Signal bars — simple static brand mark, no animation */
+.signal-mark {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 20px;
+}
+.signal-mark span {
+  width: 4px;
+  background: #34D399;
+  border-radius: 1px;
+  display: block;
+}
+.signal-mark span:nth-child(1) { height: 6px; }
+.signal-mark span:nth-child(2) { height: 11px; }
+.signal-mark span:nth-child(3) { height: 16px; }
+.signal-mark span:nth-child(4) { height: 20px; }
+
+.nav-link {
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.5rem;
+  color: #8B96AF;
+}
+.nav-link:hover { color: #E7ECF5; background-color: #1D2740; }
+.nav-link-active { color: #E7ECF5; background-color: #1D2740; }
+
+.card {
+  background-color: #161D2F;
+  border: 1px solid #26304A;
+  border-radius: 0.9rem;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.btn-primary {
+  background-color: #34D399;
+  color: #0D1321;
+  font-weight: 600;
+  border-radius: 0.6rem;
+  padding: 0.65rem 1.4rem;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary:hover { background-color: #2fbd8a; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  background-color: #1D2740;
+  border: 1px solid #26304A;
+  color: #E7ECF5;
+  font-weight: 500;
+  border-radius: 0.6rem;
+  padding: 0.65rem 1.4rem;
+  display: inline-block;
+  cursor: pointer;
+}
+.btn-secondary:hover { background-color: #26304A; }
+
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid #34D399;
+  outline-offset: 2px;
+}
+
+.progress-track {
+  background-color: #1D2740;
+  border-radius: 999px;
+  overflow: hidden;
+  height: 8px;
+}
+.progress-fill {
+  height: 100%;
+  background-color: #34D399;
+  width: 0%;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.badge-good { background: rgba(52,211,153,0.12); color: #34D399; }
+.badge-warn { background: rgba(251,191,36,0.12); color: #FBBF24; }
+.badge-bad  { background: rgba(248,113,113,0.12); color: #F87171; }
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+table.data-table th {
+  text-align: left;
+  color: #8B96AF;
+  font-weight: 600;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #26304A;
+  white-space: nowrap;
+}
+table.data-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #1D2740;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+table.data-table tbody tr:hover { background-color: #1D2740; }
+
+@media (max-width: 640px) {
+  table.data-table { display: block; overflow-x: auto; }
+}
+
+/* ── Network Health Dashboard ────────────────────────────────── */
+
+/* Status dot — flat, no pulse animation */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+.status-dot-green  { background: #34D399; }
+.status-dot-yellow { background: #FBBF24; }
+.status-dot-red    { background: #F87171; }
+.status-dot-gray   { background: #4B5563; }
+
+/* Global network status banner */
+.network-status-banner {
+  border-radius: 0.9rem;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid;
+}
+.network-status-banner.healthy  { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.25); }
+.network-status-banner.degraded { background: rgba(251,191,36,0.08);  border-color: rgba(251,191,36,0.25); }
+.network-status-banner.critical { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.25); }
+
+/* Metric cards */
+.metric-card {
+  background: #161D2F;
+  border: 1px solid #26304A;
+  border-radius: 0.9rem;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.metric-card.warn  { border-color: rgba(251,191,36,0.4); }
+.metric-card.crit  { border-color: rgba(248,113,113,0.4); }
+.metric-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Alert log */
+.alert-log-container {
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  scrollbar-width: thin;
+  scrollbar-color: #26304A transparent;
+}
+.alert-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.5rem;
+  background: #1D2740;
+  font-size: 0.8rem;
+}
+.alert-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.alert-badge-info { background: rgba(96,165,250,0.15); color: #60A5FA; }
+.alert-badge-warn { background: rgba(251,191,36,0.15);  color: #FBBF24; }
+.alert-badge-crit { background: rgba(248,113,113,0.15); color: #F87171; }
+
+/* Live indicator — static dot, no blink */
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: #34D399;
+  font-weight: 600;
+}
+.live-indicator.paused { color: #8B96AF; }
+.live-dot {
+  width: 7px; height: 7px;
+  background: #34D399;
+  border-radius: 50%;
+}
+.live-indicator.paused .live-dot { background: #8B96AF; }
+
+/* Condition slider — flat single color, no gradient */
+.condition-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #26304A;
+  cursor: pointer;
+  outline: none;
+}
+.condition-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #E7ECF5;
+  border: 2px solid #26304A;
+  cursor: pointer;
+}
+
+/* Device badge overloaded / offline */
+.badge-online     { background: rgba(52,211,153,0.12);  color: #34D399; }
+
+/* Scrollbar for alert log */
+.alert-log-container::-webkit-scrollbar { width: 5px; }
+.alert-log-container::-webkit-scrollbar-track { background: transparent; }
+.alert-log-container::-webkit-scrollbar-thumb { background: #26304A; border-radius: 999px; }
+
+/* Health score ring inside the status banner */
+.health-score-ring {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 3px solid #26304A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.health-score-ring.good { border-color: #34D399; }
+.health-score-ring.warn { border-color: #FBBF24; }
+.health-score-ring.bad  { border-color: #F87171; }
+.health-score-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #E7ECF5;
+}
+
+/* Printable session report — hidden on screen, shown only when printing */
+.print-only { display: none; }
+
+@media print {
+  body * { visibility: hidden; }
+  .print-only, .print-only * { visibility: visible; }
+  .print-only {
+    display: block;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    color: #000;
+    background: #fff;
+    padding: 1.5rem;
+    font-family: 'Inter', sans-serif;
+  }
+  .print-only h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .print-only .print-meta { font-size: 0.8rem; color: #555; margin-bottom: 1rem; }
+  .print-only table { width: 100%; border-collapse: collapse; margin: 0.75rem 0 1.25rem; font-size: 0.85rem; }
+  .print-only th, .print-only td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; text-align: left; }
+  .print-only h2 { font-size: 1rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
+}
+
+/* Module 4 & 5 accent colors (blue = summary, purple = capacity planning) */
+.badge-info   { background: rgba(96,165,250,0.12); color: #60A5FA; }
+.badge-accent { background: rgba(192,132,252,0.12); color: #C084FC; }
+
+/* Server target tabs (Monitoring Jaringan) — the active tab needs to be
+   obviously different from the rest, since it's answering "which server
+   am I actually measuring against right now?" */
+.server-tab {
+  position: relative;
+  padding: 0.4rem 0.9rem 0.4rem 1.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: #8B96AF;
+  background: #161D2F;
+  border: 1px solid #26304A;
+  cursor: pointer;
+}
+.server-tab::before {
+  content: '';
+  position: absolute;
+  left: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4B5563;
+}
+.server-tab:hover { color: #E7ECF5; }
+.server-tab.active {
+  color: #0D1321;
+  background: #34D399;
+  border-color: #34D399;
+  font-weight: 700;
+}
+.server-tab.active::before { background: #0D1321; }

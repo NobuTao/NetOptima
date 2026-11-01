@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitoring Jaringan — NetOptima</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<meta name="description" content="Skor kesehatan jaringan real-time dari ping, packet loss, jitter, dan bandwidth yang benar-benar diukur.">
+<meta property="og:title" content="Monitoring Jaringan — NetOptima">
+<meta property="og:description" content="Skor kesehatan jaringan real-time dari ping, packet loss, jitter, dan bandwidth yang benar-benar diukur.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="Monitoring jaringan real-time langsung dari browser: ukur ping, packet loss, jitter, dan kecepatan download ke berbagai server secara nyata.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0D1321', surface: '#161D2F', surface2: '#1D2740', border: '#26304A',
+          muted: '#8B96AF', fog: '#E7ECF5', signal: '#34D399', upload: '#FBBF24', alert: '#F87171',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-ink text-fog font-body min-h-screen flex flex-col">
+
+<div id="site-header"></div>
+<script src="assets/js/layout.js" data-active="simulation"></script>
+
+<main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+
+  <!-- Page Header -->
+  <section class="mb-8">
+    <p class="text-upload font-mono text-sm mb-2">MODUL 2</p>
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3 mb-1">
+          <h1 class="font-display text-2xl sm:text-3xl font-semibold">Network Monitoring</h1>
+          <span class="data-badge data-badge-real">REAL DATA</span>
+        </div>
+        <p class="text-muted mt-1 max-w-2xl leading-relaxed text-sm">
+          Ping, packet loss, jitter, dan kecepatan download diukur langsung dari browser ke server yang dipilih.
+        </p>
+      </div>
+      <!-- Live indicator + uptime -->
+      <div class="flex items-center gap-4 mt-1">
+        <div class="flex flex-col items-end gap-1">
+          <span id="liveIndicator" class="live-indicator">
+            <span class="live-dot"></span><span id="liveLabel">LIVE</span>
+          </span>
+          <span id="uptimeDisplay" class="text-xs font-mono text-muted">00:00:00</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Global Network Status Banner + Health Score -->
+  <div id="statusBanner" class="network-status-banner healthy mb-6">
+    <div class="health-score-ring" id="scoreRing" aria-hidden="true">
+      <span id="scoreValue" class="health-score-value">—</span>
+    </div>
+    <span id="statusDot" class="status-dot status-dot-green"></span>
+    <div class="flex-1 min-w-0">
+      <p id="statusTitle" class="font-display font-semibold text-signal text-base" aria-live="polite">Menginisialisasi…</p>
+      <p id="statusDesc" class="text-xs text-muted mt-0.5">Pengukuran pertama sedang berjalan, harap tunggu sebentar.</p>
+    </div>
+    <div id="measuringStatus" class="flex items-center gap-2 text-xs font-mono text-muted shrink-0 hidden">
+      <span class="spinner" aria-hidden="true"></span>Mengukur…
+    </div>
+  </div>
+
+  <!-- Server Selector + Controls -->
+  <div class="flex flex-wrap items-center gap-3 mb-8">
+    <span class="text-xs font-mono text-muted shrink-0 hidden sm:inline">TARGET:</span>
+    <div id="serverTabs" class="flex flex-wrap gap-2" role="group" aria-label="Pilih server target"></div>
+    <div class="ml-auto flex gap-3 shrink-0">
+      <button id="toggleBtn" class="btn-primary flex items-center gap-2" aria-label="Pause atau resume monitoring">
+        <svg id="toggleIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>
+        </svg>
+        <span id="toggleLabel">Pause</span>
+      </button>
+      <button id="resetBtn" class="btn-secondary flex items-center gap-2" aria-label="Reset semua data">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+        </svg>
+        Reset
+      </button>
+      <button id="reportBtn" class="btn-secondary flex items-center gap-2" aria-label="Unduh laporan sesi">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+        </svg>
+        Laporan
+      </button>
+    </div>
+  </div>
+
+  <!-- Metrics Row -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+    <div class="metric-card" id="cardPing">
+      <p class="text-xs font-mono text-muted uppercase tracking-wider">Ping</p>
+      <p class="metric-value text-signal" id="metricPing">—</p>
+      <p class="text-xs text-muted">ms</p>
+    </div>
+    <div class="metric-card" id="cardLoss">
+      <p class="text-xs font-mono text-muted uppercase tracking-wider">Packet Loss</p>
+      <p class="metric-value text-signal" id="metricLoss">—</p>
+      <p class="text-xs text-muted">%</p>
+    </div>
+    <div class="metric-card" id="cardJitter">
+      <p class="text-xs font-mono text-muted uppercase tracking-wider">Jitter</p>
+      <p class="metric-value text-signal" id="metricJitter">—</p>
+      <p class="text-xs text-muted">ms</p>
+    </div>
+    <div class="metric-card" id="cardBw">
+      <p class="text-xs font-mono text-muted uppercase tracking-wider">Download</p>
+      <p class="metric-value text-signal" id="metricBw">—</p>
+      <p class="text-xs text-muted" id="bwNote">Mbps</p>
+    </div>
+  </div>
+
+  <!-- Chart + Alert Log -->
+  <div class="grid lg:grid-cols-5 gap-6 mb-8">
+    <div class="card p-5 sm:p-6 lg:col-span-3">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-display font-semibold text-sm">Riwayat Real-Time</h2>
+        <span class="text-xs font-mono text-muted">Ping &amp; Packet Loss</span>
+      </div>
+      <div style="height: 220px;">
+        <canvas id="healthChart"></canvas>
+      </div>
+    </div>
+    <div class="card p-5 sm:p-6 lg:col-span-2 flex flex-col">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-display font-semibold text-sm">Alert Log</h2>
+        <span id="alertCount" class="badge badge-good">0 event</span>
+      </div>
+      <div id="alertLog" class="alert-log-container flex-1">
+        <div class="text-xs text-muted text-center py-6 italic">Monitoring berjalan — menunggu event…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connection Info (Real from navigator.connection) -->
+  <div class="card p-5 sm:p-6 mb-8">
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-3">
+        <h2 class="font-display font-semibold text-base">Informasi Koneksi Perangkat Ini</h2>
+        <span class="data-badge data-badge-real">REAL DATA</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+      <div>
+        <p class="text-xs font-mono text-muted uppercase tracking-wider mb-1">Tipe Koneksi</p>
+        <p id="connType" class="font-semibold text-fog text-sm">—</p>
+      </div>
+      <div>
+        <p class="text-xs font-mono text-muted uppercase tracking-wider mb-1">Kualitas Efektif</p>
+        <p id="connEffective" class="font-semibold text-fog text-sm">—</p>
+      </div>
+      <div>
+        <p class="text-xs font-mono text-muted uppercase tracking-wider mb-1">RTT (Browser Est.)</p>
+        <p class="flex items-baseline gap-1">
+          <span id="connRtt" class="stat-value text-xl font-semibold text-signal">—</span>
+          <span class="text-xs text-muted">ms</span>
+        </p>
+      </div>
+      <div>
+        <p class="text-xs font-mono text-muted uppercase tracking-wider mb-1">Data Saver</p>
+        <p id="connSaveData" class="font-semibold text-fog text-sm">—</p>
+      </div>
+    </div>
+    <p id="connUnavailNote" class="text-xs text-muted mt-4 hidden">
+      ⚠ Network Information API tidak tersedia di browser ini — Firefox dan Safari belum mendukung API ini.
+    </p>
+    <p class="text-xs text-muted mt-3">
+      Sumber: <code class="font-mono text-muted">navigator.connection</code> — estimasi browser berdasarkan kondisi jaringan aktif saat ini.
+    </p>
+  </div>
+
+  <!-- Device Table -->
+  <div class="card p-5 sm:p-6">
+    <h2 class="font-display font-semibold text-base mb-4">Perangkat Ini</h2>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Perangkat</th>
+            <th>Status</th>
+            <th>Download</th>
+            <th>Latency</th>
+            <th>Browser</th>
+          </tr>
+        </thead>
+        <tbody id="deviceTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Populated by simulation.js right before window.print() is called;
+       hidden on screen, only shown in the print stylesheet. -->
+  <section id="printReport" class="print-only"></section>
+
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/simulation.js"></script>
+</body>
+</html>

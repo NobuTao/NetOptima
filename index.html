@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NetOptima</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<meta name="description" content="Speed test, monitoring jaringan real-time, analisis log Mikrotik, dan perencanaan kapasitas — semua jalan di browser tanpa server.">
+<meta property="og:title" content="NetOptima — Sistem Analisis &amp; Optimalisasi Bandwidth Jaringan">
+<meta property="og:description" content="Speed test, monitoring jaringan real-time, analisis log Mikrotik, dan perencanaan kapasitas — semua jalan di browser tanpa server.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0D1321', surface: '#161D2F', surface2: '#1D2740', border: '#26304A',
+          muted: '#8B96AF', fog: '#E7ECF5', signal: '#34D399', upload: '#FBBF24', alert: '#F87171',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-ink text-fog font-body min-h-screen flex flex-col">
+
+<div id="site-header"></div>
+<script src="assets/js/layout.js" data-active="home"></script>
+
+<main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+
+<section class="mb-14">
+  <p class="text-signal font-mono text-sm mb-3 tracking-wide">SISTEM ANALISIS &amp; OPTIMALISASI BANDWIDTH</p>
+  <h1 class="font-display text-3xl sm:text-5xl font-semibold leading-tight max-w-3xl">
+    Lihat, uji, dan pahami<br class="hidden sm:block"> jaringanmu — bukan cuma bilang &ldquo;lemot&rdquo;.
+  </h1>
+  <p class="text-muted mt-5 max-w-xl leading-relaxed">
+    Speed test, monitoring jaringan, dan analisis log Mikrotik dalam satu tempat — berjalan langsung di browser, tanpa server.
+  </p>
+  <div class="mt-8 flex flex-wrap gap-3">
+    <a href="speedtest.html" class="btn-primary">Mulai Speed Test</a>
+    <a href="loganalysis.html" class="btn-secondary">Unggah Log Mikrotik</a>
+  </div>
+</section>
+
+<section class="grid sm:grid-cols-3 gap-4 mb-14">
+  <div class="card p-5">
+    <p class="text-muted text-xs font-mono mb-1">TES TERAKHIR</p>
+    <p id="lastTestValue" class="stat-value text-2xl font-semibold text-signal">—</p>
+    <p id="lastTestTime" class="text-xs text-muted mt-1">Belum ada data</p>
+  </div>
+  <div class="card p-5">
+    <p class="text-muted text-xs font-mono mb-1">TOTAL SPEED TEST</p>
+    <p id="testCount" class="stat-value text-2xl font-semibold">0</p>
+    <p class="text-xs text-muted mt-1">tersimpan di browser ini</p>
+  </div>
+  <div class="card p-5">
+    <p class="text-muted text-xs font-mono mb-1">LOG DIANALISIS</p>
+    <p id="logCount" class="stat-value text-2xl font-semibold">0</p>
+    <p class="text-xs text-muted mt-1">file Mikrotik diproses</p>
+  </div>
+</section>
+
+<section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+  <a href="speedtest.html" class="card p-6 flex flex-col gap-3">
+    <span class="badge badge-good w-fit">MODUL 1</span>
+    <h2 class="font-display text-xl font-semibold">Speed Test &amp; Analisis</h2>
+    <p class="text-sm text-muted leading-relaxed">Ukur download, ping, dan jitter koneksimu.</p>
+  </a>
+  <a href="simulation.html" class="card p-6 flex flex-col gap-3">
+    <span class="badge badge-warn w-fit">MODUL 2</span>
+    <h2 class="font-display text-xl font-semibold">Monitoring Jaringan</h2>
+    <p class="text-sm text-muted leading-relaxed">Skor kesehatan jaringan real-time dari ping, packet loss, jitter, dan download perangkat ini.</p>
+  </a>
+  <a href="loganalysis.html" class="card p-6 flex flex-col gap-3">
+    <span class="badge badge-bad w-fit">MODUL 3</span>
+    <h2 class="font-display text-xl font-semibold">Analisis Log Mikrotik</h2>
+    <p class="text-sm text-muted leading-relaxed">Ranking pemakai bandwidth terbesar dari log Mikrotik yang diunggah.</p>
+  </a>
+  <a href="summary.html" class="card p-6 flex flex-col gap-3">
+    <span class="badge badge-info w-fit">MODUL 4</span>
+    <h2 class="font-display text-xl font-semibold">Ringkasan Eksekutif</h2>
+    <p class="text-sm text-muted leading-relaxed">Rangkuman otomatis dari 3 modul lain jadi satu kesimpulan.</p>
+  </a>
+  <a href="capacity.html" class="card p-6 flex flex-col gap-3">
+    <span class="badge badge-accent w-fit">MODUL 5</span>
+    <h2 class="font-display text-xl font-semibold">Perencanaan Kapasitas</h2>
+    <p class="text-sm text-muted leading-relaxed">Proyeksikan kapan kapasitas bandwidth akan terlampaui.</p>
+  </a>
+</section>
+
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/main.js"></script>
+<script>
+  const history = Store.getSpeedtestHistory();
+  const logHistory = Store.getLogHistory();
+
+  document.getElementById('testCount').textContent = history.length;
+  document.getElementById('logCount').textContent = logHistory.length;
+
+  if (history.length > 0) {
+    const last = history[history.length - 1];
+    document.getElementById('lastTestValue').innerHTML = `${Number(last.download_mbps).toFixed(1)} <span class="text-sm text-muted">Mbps &darr;</span>`;
+    document.getElementById('lastTestTime').textContent = last.created_at;
+  }
+</script>
+</body>
+</html>

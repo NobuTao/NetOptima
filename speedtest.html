@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speed Test — NetOptima</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<meta name="description" content="Ukur kecepatan unduh, unggah, ping, dan jitter koneksimu, lengkap interpretasi otomatis.">
+<meta property="og:title" content="Speed Test — NetOptima">
+<meta property="og:description" content="Ukur kecepatan unduh, unggah, ping, dan jitter koneksimu, lengkap interpretasi otomatis.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0D1321', surface: '#161D2F', surface2: '#1D2740', border: '#26304A',
+          muted: '#8B96AF', fog: '#E7ECF5', signal: '#34D399', upload: '#FBBF24', alert: '#F87171',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-ink text-fog font-body min-h-screen flex flex-col">
+
+<div id="site-header"></div>
+<script src="assets/js/layout.js" data-active="speedtest"></script>
+
+<main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+
+<section class="mb-10">
+  <p class="text-signal font-mono text-sm mb-2">MODUL 1</p>
+  <h1 class="font-display text-2xl sm:text-3xl font-semibold">Speed Test &amp; Analisis Kualitas Jaringan</h1>
+  <p class="text-muted mt-3 max-w-2xl leading-relaxed">
+    Ukur kecepatan unduh, latency, dan jitter koneksimu saat ini.
+  </p>
+  <p class="text-xs text-muted mt-3 max-w-2xl leading-relaxed border-l-2 border-border pl-3">
+    Catatan: pengukuran unggah bergantung layanan pihak ketiga dan bisa gagal tergantung jaringanmu.
+  </p>
+</section>
+
+<section class="card p-6 sm:p-8 mb-10">
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-5 mb-6">
+    <div>
+      <p class="text-xs font-mono text-muted mb-1">DOWNLOAD</p>
+      <p id="statDownload" class="stat-value text-3xl font-semibold text-signal">—</p>
+      <p class="text-xs text-muted">Mbps</p>
+    </div>
+    <div>
+      <p class="text-xs font-mono text-muted mb-1">UPLOAD</p>
+      <p id="statUpload" class="stat-value text-3xl font-semibold text-upload">—</p>
+      <p class="text-xs text-muted">Mbps</p>
+    </div>
+    <div>
+      <p class="text-xs font-mono text-muted mb-1">PING</p>
+      <p id="statPing" class="stat-value text-3xl font-semibold">—</p>
+      <p class="text-xs text-muted">ms</p>
+    </div>
+    <div>
+      <p class="text-xs font-mono text-muted mb-1">JITTER</p>
+      <p id="statJitter" class="stat-value text-3xl font-semibold">—</p>
+      <p class="text-xs text-muted">ms</p>
+    </div>
+  </div>
+
+  <div class="progress-track mb-2">
+    <div id="progressFill" class="progress-fill"></div>
+  </div>
+  <p id="statusText" class="text-sm text-muted mb-2 font-mono" aria-live="polite">Siap memulai pengujian.</p>
+  <p id="uploadNote" class="hidden text-xs text-alert mb-4">Pengukuran unggah tidak berhasil (endpoint publik tidak dapat diakses dari jaringan kamu). Metrik lain tetap valid.</p>
+
+  <button id="startTestBtn" class="btn-primary">Mulai Test</button>
+
+  <div id="interpretation" class="hidden mt-6 p-4 rounded-lg bg-surface2 border border-border text-sm leading-relaxed"></div>
+</section>
+
+<section class="card p-6 sm:p-8">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="font-display text-lg font-semibold">Riwayat Pengujian</h2>
+    <div class="flex items-center gap-3">
+      <span id="historyEmpty" class="text-xs text-muted hidden">Belum ada riwayat</span>
+      <button id="exportHistoryCsvBtn" class="btn-secondary text-xs">Unduh CSV</button>
+    </div>
+  </div>
+  <div class="mb-6" style="height: 260px;">
+    <canvas id="historyChart"></canvas>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr><th>Waktu</th><th>Download</th><th>Upload</th><th>Ping</th><th>Jitter</th></tr>
+      </thead>
+      <tbody id="historyTableBody"></tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/speedtest.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perencanaan Kapasitas — NetOptima</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<meta name="description" content="Proyeksikan kapan kapasitas bandwidth akan terlampaui berdasarkan tren pertumbuhan pemakaian.">
+<meta property="og:title" content="Perencanaan Kapasitas — NetOptima">
+<meta property="og:description" content="Proyeksikan kapan kapasitas bandwidth akan terlampaui berdasarkan tren pertumbuhan pemakaian.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0D1321', surface: '#161D2F', surface2: '#1D2740', border: '#26304A',
+          muted: '#8B96AF', fog: '#E7ECF5', signal: '#34D399', upload: '#FBBF24', alert: '#F87171',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-ink text-fog font-body min-h-screen flex flex-col">
+
+<div id="site-header"></div>
+<script src="assets/js/layout.js" data-active="capacity"></script>
+
+<main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+
+<section class="mb-10">
+  <p class="text-sm mb-2 font-mono" style="color:#C084FC">MODUL 5</p>
+  <h1 class="font-display text-2xl sm:text-3xl font-semibold">Perencanaan Kapasitas</h1>
+  <p class="text-muted mt-3 max-w-2xl leading-relaxed">
+    Proyeksikan kapan kapasitas bandwidth akan terlampaui berdasarkan tren pertumbuhan pemakaian.
+  </p>
+</section>
+
+<section class="card p-6 sm:p-8 mb-8">
+  <h2 class="font-display text-lg font-semibold mb-5">Parameter Proyeksi</h2>
+  <div class="grid sm:grid-cols-2 gap-5 mb-5">
+    <div>
+      <label for="inputCapacity" class="text-xs font-mono text-muted block mb-1.5">KAPASITAS BANDWIDTH SAAT INI (Mbps)</label>
+      <input type="number" id="inputCapacity" min="0.1" step="0.1" value="50"
+        class="w-full bg-surface2 border border-border rounded-lg px-3 py-2 text-sm font-mono focus-visible:outline-signal">
+    </div>
+    <div>
+      <label for="inputUsage" class="text-xs font-mono text-muted block mb-1.5">RATA-RATA PEMAKAIAN SAAT INI (Mbps)</label>
+      <div class="flex gap-2">
+        <input type="number" id="inputUsage" min="0.1" step="0.1" value="20"
+          class="w-full bg-surface2 border border-border rounded-lg px-3 py-2 text-sm font-mono focus-visible:outline-signal">
+        <button id="fillFromSpeedtestBtn" class="btn-secondary text-xs whitespace-nowrap" title="Isi dari rata-rata riwayat Speed Test">Dari Speed Test</button>
+      </div>
+    </div>
+    <div>
+      <label for="inputGrowth" class="text-xs font-mono text-muted block mb-1.5">PERTUMBUHAN PEMAKAIAN PER BULAN (%)</label>
+      <input type="number" id="inputGrowth" min="0" step="0.5" value="5"
+        class="w-full bg-surface2 border border-border rounded-lg px-3 py-2 text-sm font-mono focus-visible:outline-signal">
+    </div>
+    <div>
+      <label for="inputHorizon" class="text-xs font-mono text-muted block mb-1.5">JANGKA WAKTU PROYEKSI (BULAN)</label>
+      <select id="inputHorizon" class="w-full bg-surface2 border border-border rounded-lg px-3 py-2 text-sm font-mono focus-visible:outline-signal">
+        <option value="12">12 bulan</option>
+        <option value="24" selected>24 bulan</option>
+        <option value="36">36 bulan</option>
+      </select>
+    </div>
+  </div>
+  <button id="calcBtn" class="btn-primary">Hitung Proyeksi</button>
+  <p id="formError" class="hidden text-sm text-alert mt-3" role="alert"></p>
+  <p class="text-xs text-muted mt-3 leading-relaxed">
+    Rumus: <span class="font-mono">pemakaian_bulan_n = pemakaian_sekarang × (1 + pertumbuhan)ⁿ</span>. Estimasi kasar, bukan prediksi presisi.
+  </p>
+</section>
+
+<section id="resultSection" class="hidden space-y-6">
+  <div id="verdictBanner" class="network-status-banner mb-2"></div>
+
+  <div class="card p-6 sm:p-8">
+    <h2 class="font-display text-lg font-semibold mb-4">Proyeksi Kapasitas vs Pemakaian</h2>
+    <div style="height: 300px;">
+      <canvas id="capacityChart"></canvas>
+    </div>
+  </div>
+
+  <div class="grid sm:grid-cols-3 gap-4">
+    <div class="card p-5">
+      <p class="text-xs font-mono text-muted mb-1">TITIK KRITIS</p>
+      <p id="criticalMonth" class="stat-value text-2xl font-semibold">—</p>
+    </div>
+    <div class="card p-5">
+      <p class="text-xs font-mono text-muted mb-1">PEMAKAIAN AKHIR PERIODE</p>
+      <p id="finalUsage" class="stat-value text-2xl font-semibold">—</p>
+    </div>
+    <div class="card p-5">
+      <p class="text-xs font-mono text-muted mb-1">REKOMENDASI KAPASITAS</p>
+      <p id="recommendedCapacity" class="stat-value text-2xl font-semibold text-signal">—</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/capacity.js"></script>
+</body>
+</html>
